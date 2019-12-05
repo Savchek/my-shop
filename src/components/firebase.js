@@ -18,7 +18,7 @@ class Firebase {
 		app.initializeApp(firebaseConfig)
 		this.auth = app.auth()
 		this.db = app.firestore()
-		this.oldGood = {}
+		this.oldProduct = {}
 	}
 
 	isInitialized() {
@@ -38,7 +38,7 @@ class Firebase {
 	async register(email, password) {
 		await this.auth.createUserWithEmailAndPassword(email, password)
 		return this.db.collection('users').doc(this.auth.currentUser.uid).set({
-			goods: [],
+			products: [],
 			sales: [],
 			pastSales: []
 		})
@@ -53,27 +53,30 @@ class Firebase {
 		}
 	}
 
-	async addGood(good) {
+	async addProduct(product) {
+		console.log('Adding')
+		console.log(product)
 		await this.db.collection('users').doc(this.auth.currentUser.uid).update({
-			goods: app.firestore.FieldValue.arrayUnion(good)
+			products: app.firestore.FieldValue.arrayUnion(product)
 		})
 		await this.updateCollection()
 	}
 
-	async deleteGood(good) {
-
+	async deleteProduct(product) {
+		console.log('Deleting')
+		console.log(product)
 		await this.db.collection('users').doc(this.auth.currentUser.uid).update({
-			goods: app.firestore.FieldValue.arrayRemove(good)
+			products: app.firestore.FieldValue.arrayRemove(product)
 		})
 		// then pulling data 
 		await this.updateCollection()
 	}
 
 	// ! fix editing
-	memorizeGood(good) {
-		console.log('Memotizing good')
-		this.oldGood = { ...good }
-		console.log(this.oldGood)
+	memorizeProduct(product) {
+		console.log('Memotizing product')
+		this.oldProduct = { ...product }
+		console.log(this.oldProduct)
 	}
 }
 

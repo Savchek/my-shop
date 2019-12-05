@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
-import ListGoods from './ListGoods'
+import ListProducts from './ListProducts'
 import firebase from '../firebase'
 
 
-const PurschareGood = () => {
+const PurschareProduct = () => {
 
-	const [choosingGood, setChoosingGood] = useState(true)
-	const [good, setGood] = useState({})
+	const [choosingProduct, setChoosingProduct] = useState(true)
+	const [product, setProduct] = useState({})
 	const [saving, setSaving] = useState(false)
 
 	const [price, setPrice] = useState('')
 	const [count, setCount] = useState('')
 
-	const chooseGood = good => {
-		setGood(good)
-		setChoosingGood(false)
+	const chooseProduct = product => {
+		setProduct(product)
+		setChoosingProduct(false)
 	}
 
 	const purschare = async () => {
@@ -31,22 +31,22 @@ const PurschareGood = () => {
 
 		setSaving(true)
 
-		await firebase.deleteGood(good)
-		let nGood = good
+		await firebase.deleteProduct(product)
+		let nProduct = product
 
-		const priceIndex = good.buyPrices.indexOf(price)
+		const priceIndex = product.purscharePrices.indexOf(price)
 
 		if (priceIndex === -1) {
-			nGood.buyPrices.push(price)
-			nGood.buyCounts.push(count)
+			nProduct.purscharePrices.push(price)
+			nProduct.purschareCounts.push(count)
 		} else {
-			nGood.buyPrices = nGood.buyPrices.map((e, i) => i === priceIndex ? price : e)
-			nGood.buyCounts = nGood.buyCounts.map((e, i) => i === priceIndex ? parseFloat(e) + parseFloat(count) : e)
+			nProduct.purscharePrices = nProduct.purscharePrices.map((e, i) => i === priceIndex ? price : e)
+			nProduct.purschareCounts = nProduct.purschareCounts.map((e, i) => i === priceIndex ? parseFloat(e) + parseFloat(count) : e)
 		}
 
-		await firebase.addGood(nGood)
+		await firebase.addProduct(nProduct)
 		setSaving(false)
-		setChoosingGood(true)
+		setChoosingProduct(true)
 		setPrice('')
 		setCount('')
 	}
@@ -55,11 +55,11 @@ const PurschareGood = () => {
 	return (
 		<div>
 			<h1>Purscharing</h1>
-			{choosingGood ?
-				<ListGoods chooseGood={chooseGood} title='Choose good to purschare' /> :
+			{choosingProduct ?
+				<ListProducts chooseProduct={chooseProduct} title='Choose product to purschare' /> :
 
 				<div>
-					<h1>{good.name}</h1>
+					<h1>{product.name}</h1>
 
 					<p>Price</p>
 					<input
@@ -77,11 +77,11 @@ const PurschareGood = () => {
 					/>
 
 					{saving && <div className='saving'>Saving</div>}
-					<button onClick={() => setChoosingGood(true)}>Choose another good</button>
+					<button onClick={() => setChoosingProduct(true)}>Choose another product</button>
 					<button onClick={purschare}>Apply</button>
 				</div>}
 		</div>
 	)
 }
 
-export default PurschareGood
+export default PurschareProduct

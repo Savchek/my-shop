@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import firebase from '../firebase'
 
-const ListGoods = ({ chooseGood, title }) => {
+const ListProducts = ({ chooseProduct, title }) => {
 
-	const [goods, setGoods] = useState([])
+	const [products, setProducts] = useState([])
 	const [loading, setLoading] = useState(true)
 
 	const getCollection = async () => {
 		await firebase.updateCollection()
-		setGoods(firebase.collection.goods)
+		setProducts(firebase.collection.products)
 		setLoading(false)
 	}
 
@@ -17,20 +17,22 @@ const ListGoods = ({ chooseGood, title }) => {
 	}, [])
 
 
-	const renderGoods = () => (
+	const renderProducts = () => (
 		<div>
 			<h1>{title}</h1>
-			{goods.length > 0 ?
+			{products.length > 0 ?
 				(<ul>
 					{
-						goods.map(e => (
-							<li onClick={() => chooseGood(e)} key={e.id}>
+						products.map(e => (
+							<li onClick={() => chooseProduct(e)} key={e.id}>
 								<p>Название: {e.name}</p>
 								<p>Атрибут: {e.attribute}</p>
-								{e.buyPrices.map((p, i) => (
-									<p key={p}>Цена закупки: {p}, Количество: {e.buyCounts[i]} шт.</p>
+								{e.purscharePrices.map((p, i) => (
+									<p key={i}>Цена закупки: {p}, Количество: {e.purschareCounts[i]} шт.</p>
 								))}
+								<p>Total count: {e.purschareCounts.reduce((t, v) => t + parseInt(v), 0)}</p>
 								<p>Цена продажи: {e.sellPrice}</p>
+								<p>Planned to sale: {e.sellCount}</p>
 							</li>
 						))
 					}
@@ -47,10 +49,10 @@ const ListGoods = ({ chooseGood, title }) => {
 			{
 				loading ?
 					<div className="loader">Loading</div> :
-					renderGoods()
+					renderProducts()
 			}
 		</div>
 	)
 }
 
-export default ListGoods
+export default ListProducts

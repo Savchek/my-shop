@@ -3,9 +3,10 @@ import firebase from '../firebase'
 import Login from '../Login/Login'
 import MainScreen from '../MainScreen/MainScreen'
 import NavPanel from '../NavPanel/NavPanel'
-import AddGood from '../Goods/AddGood'
-import EditGood from '../Goods/EditGood'
-import PurschareGood from '../Goods/PurschareGood'
+import AddProduct from '../Products/AddProduct'
+import EditProduct from '../Products/EditProduct'
+import PurschareProduct from '../Products/PurschareProduct'
+import AddSale from '../Sales/AddSale'
 
 const App = () => {
 	const [firebaseInitialized, setFirebaseInitialized] = useState(false)
@@ -34,12 +35,14 @@ const App = () => {
 			return <Login updateScreen={setScreen} />
 		case 'Main':
 			return <MainScreen updateScreen={setScreen} />
-		case 'AddGood':
-			return <AddGood updateScreen={setScreen} />
-		case 'EditGood':
-			return <EditGood />
-		case 'PurschareGood':
-			return <PurschareGood updateScreen={setScreen} />
+		case 'AddProduct':
+			return <AddProduct updateScreen={setScreen} />
+		case 'EditProduct':
+			return <EditProduct />
+		case 'PurschareProduct':
+			return <PurschareProduct updateScreen={setScreen} />
+		case 'AddSale':
+			return <AddSale updateScreen={setScreen} />
 		default:
 			return <div>Screen switcher error</div>
 		}
@@ -50,7 +53,7 @@ const App = () => {
 		<div>
 			{firebaseInitialized !== false ? (<div>
 				{screenSwitcher()}
-				{screen != 'Login' && <NavPanel screen={screen} updateScreen={setScreen} />}
+				{screen !== 'Login' && <NavPanel screen={screen} updateScreen={setScreen} />}
 
 			</div>) : <div className="loader">Loading</div>}
 		</div>

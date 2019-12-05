@@ -13,7 +13,6 @@ const NavPanel = ({ screen, updateScreen }) => {
 			<button
 				disabled={screen === 'Main'}
 				onClick={() => updateScreen('Main')}
-				style={{ border: screen === 'Main' ? '2px solid black' : 'none' }}
 			>Главная</button>
 
 			<button
@@ -22,20 +21,18 @@ const NavPanel = ({ screen, updateScreen }) => {
 			>Продажи</button>
 
 			<button
-				disabled
-				onClick={() => updateScreen('')}
+				disabled={screen === 'AddSale'}
+				onClick={() => updateScreen('AddSale')}
 			>Сделка</button>
 
 			<button
-				disabled={screen === 'PurschareGood'}
-				onClick={() => updateScreen('PurschareGood')}
-				style={{ border: screen === 'PurschareGood' ? '2px solid black' : 'none' }}
+				disabled={screen === 'PurschareProduct'}
+				onClick={() => updateScreen('PurschareProduct')}
 			>Приход товара</button>
 
 			<button
-				disabled={screen === 'AddGood'}
-				onClick={() => updateScreen('AddGood')}
-				style={{ border: screen === 'AddGood' ? '2px solid black' : 'none' }}
+				disabled={screen === 'AddProduct'}
+				onClick={() => updateScreen('AddProduct')}
 			>Добавить товар</button>
 
 			<button
@@ -44,9 +41,8 @@ const NavPanel = ({ screen, updateScreen }) => {
 			>Наличие</button>
 
 			<button
-				disabled={screen === 'EditGood'}
-				onClick={() => updateScreen('EditGood')}
-				style={{ border: screen === 'EditGood' ? '2px solid black' : 'none' }}
+				disabled={screen === 'EditProduct'}
+				onClick={() => updateScreen('EditProduct')}
 			>Склад</button>
 
 

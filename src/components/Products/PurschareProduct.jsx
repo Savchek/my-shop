@@ -44,6 +44,8 @@ const PurschareProduct = () => {
 			nProduct.purschareCounts = nProduct.purschareCounts.map((e, i) => i === priceIndex ? parseFloat(e) + parseFloat(count) : e)
 		}
 
+		nProduct.sellCounts.push('0')
+
 		await firebase.addProduct(nProduct)
 		setSaving(false)
 		setChoosingProduct(true)

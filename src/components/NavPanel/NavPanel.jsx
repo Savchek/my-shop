@@ -16,13 +16,13 @@ const NavPanel = ({ screen, updateScreen }) => {
 			>Главная</button>
 
 			<button
-				disabled
-				onClick={() => updateScreen('')}
+				disabled={screen === 'ListSells'}
+				onClick={() => updateScreen('ListSells')}
 			>Продажи</button>
 
 			<button
-				disabled={screen === 'AddSale'}
-				onClick={() => updateScreen('AddSale')}
+				disabled={screen === 'AddSell'}
+				onClick={() => updateScreen('AddSell')}
 			>Сделка</button>
 
 			<button

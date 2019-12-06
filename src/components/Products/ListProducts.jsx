@@ -32,7 +32,7 @@ const ListProducts = ({ chooseProduct, title }) => {
 								))}
 								<p>Total count: {e.purschareCounts.reduce((t, v) => t + parseInt(v), 0)}</p>
 								<p>Цена продажи: {e.sellPrice}</p>
-								<p>Planned to sale: {e.sellCount}</p>
+								<p>Planned to sell: {e.sellCount}</p>
 							</li>
 						))
 					}

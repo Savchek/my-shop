@@ -8,6 +8,7 @@ const AddProduct = ({ updateScreen }) => {
 		attribute: '',
 		purscharePrices: ['0'],
 		purschareCounts: ['0'],
+		sellCounts: ['0'],
 		sellPrice: '0',
 		sellCount: '0',
 		id: Math.random()

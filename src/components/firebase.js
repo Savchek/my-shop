@@ -39,8 +39,8 @@ class Firebase {
 		await this.auth.createUserWithEmailAndPassword(email, password)
 		return this.db.collection('users').doc(this.auth.currentUser.uid).set({
 			products: [],
-			sales: [],
-			pastSales: []
+			sells: [],
+			pastSells: []
 		})
 	}
 
@@ -69,6 +69,13 @@ class Firebase {
 			products: app.firestore.FieldValue.arrayRemove(product)
 		})
 		// then pulling data 
+		await this.updateCollection()
+	}
+
+	async addSell(sell) {
+		await this.db.collection('users').doc(this.auth.currentUser.uid).update({
+			sells: app.firestore.FieldValue.arrayUnion(sell)
+		})
 		await this.updateCollection()
 	}
 

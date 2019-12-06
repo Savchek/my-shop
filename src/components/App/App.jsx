@@ -6,7 +6,8 @@ import NavPanel from '../NavPanel/NavPanel'
 import AddProduct from '../Products/AddProduct'
 import EditProduct from '../Products/EditProduct'
 import PurschareProduct from '../Products/PurschareProduct'
-import AddSale from '../Sales/AddSale'
+import AddSell from '../Sells/AddSell'
+import ListSells from '../Sells/ListSells'
 
 const App = () => {
 	const [firebaseInitialized, setFirebaseInitialized] = useState(false)
@@ -41,8 +42,10 @@ const App = () => {
 			return <EditProduct />
 		case 'PurschareProduct':
 			return <PurschareProduct updateScreen={setScreen} />
-		case 'AddSale':
-			return <AddSale updateScreen={setScreen} />
+		case 'AddSell':
+			return <AddSell updateScreen={setScreen} />
+		case 'ListSells':
+			return <ListSells updateScreen={setScreen} />
 		default:
 			return <div>Screen switcher error</div>
 		}

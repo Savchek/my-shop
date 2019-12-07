@@ -143,7 +143,7 @@ const ListSells = ({ updateScreen }) => {
 		<div>
 			<h1>Adding sell</h1>
 			{choosingProduct ?
-				<ListProducts chooseProduct={chooseProduct} title='Choose product to sell' /> :
+				<ListProducts chooseProduct={chooseProduct} title='Choose product to sell' filter='all' /> :
 				<div>
 					{loading && <div>Loading</div>}
 					<p>Title</p>

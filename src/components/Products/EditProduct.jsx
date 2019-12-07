@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import ListProducts from './ListProducts'
 import firebase from '../firebase'
 
-const EditProduct = () => {
+const EditProduct = ({ filter }) => {
 
+	// const [F, setF] = useState(filter)
+	const [sells, setSells] = useState([])
 	const [buyDataLen, setBuyDataLen] = useState(0)
 	const [oldProduct, setOldProduct] = useState({})
 	const [product, setProduct] = useState({})
@@ -56,13 +58,15 @@ const EditProduct = () => {
 		setProduct(product)
 		setOldProduct(product)
 		// firebase.memorizeProduct(product)
+		setSells(firebase.collection.sells.filter(s => s.sellItemInfo.id === product.id))
+		console.log(firebase.collection.sells.filter(s => s.sellItemInfo.id === product.id))
 		setChoosingProduct(false)
 		setBuyDataLen(product.purscharePrices.length)
 	}
 
 	return (
 		<div>
-			{choosingProduct ? <ListProducts chooseProduct={chooseProduct} title='Products list' /> :
+			{choosingProduct ? <ListProducts chooseProduct={chooseProduct} title='Products list' filter={filter} /> :
 
 				product.purscharePrices ?
 

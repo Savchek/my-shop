@@ -18,7 +18,8 @@ class Firebase {
 		app.initializeApp(firebaseConfig)
 		this.auth = app.auth()
 		this.db = app.firestore()
-		this.oldProduct = {}
+		// this.oldProduct = {}
+		this.collection = {}
 	}
 
 	isInitialized() {
@@ -80,11 +81,11 @@ class Firebase {
 	}
 
 	// ! fix editing
-	memorizeProduct(product) {
-		console.log('Memotizing product')
-		this.oldProduct = { ...product }
-		console.log(this.oldProduct)
-	}
+	// memorizeProduct(product) {
+	// 	console.log('Memotizing product')
+	// 	this.oldProduct = { ...product }
+	// 	console.log(this.oldProduct)
+	// }
 }
 
 export default new Firebase()

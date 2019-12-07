@@ -1,7 +1,7 @@
 import React from 'react'
 import firebase from '../firebase'
 
-const NavPanel = ({ screen, updateScreen }) => {
+const NavPanel = ({ screen, updateScreen, productsFilter, setProductsFilter }) => {
 
 	const logout = async () => {
 		await firebase.logout()
@@ -36,13 +36,19 @@ const NavPanel = ({ screen, updateScreen }) => {
 			>Добавить товар</button>
 
 			<button
-				disabled
-				onClick={() => updateScreen('')}
+				disabled={screen === 'EditProduct' && productsFilter === 'available'}
+				onClick={() => {
+					setProductsFilter('available')
+					updateScreen('EditProduct')
+				}}
 			>Наличие</button>
 
 			<button
-				disabled={screen === 'EditProduct'}
-				onClick={() => updateScreen('EditProduct')}
+				disabled={screen === 'EditProduct' && productsFilter === 'all'}
+				onClick={() => {
+					setProductsFilter('all')
+					updateScreen('EditProduct')
+				}}
 			>Склад</button>
 
 

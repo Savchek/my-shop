@@ -12,6 +12,8 @@ import ListSells from '../Sells/ListSells'
 const App = () => {
 	const [firebaseInitialized, setFirebaseInitialized] = useState(false)
 	const [screen, setScreen] = useState('')
+	const [productsFilter, setProductsFilter] = useState('all')
+	const [sellsFilter, setSellsFilter] = useState('all')
 
 	const initFirebase = async () => {
 		const res = await firebase.isInitialized()
@@ -39,13 +41,13 @@ const App = () => {
 		case 'AddProduct':
 			return <AddProduct updateScreen={setScreen} />
 		case 'EditProduct':
-			return <EditProduct />
+			return <EditProduct filter={productsFilter} />
 		case 'PurschareProduct':
 			return <PurschareProduct updateScreen={setScreen} />
 		case 'AddSell':
 			return <AddSell updateScreen={setScreen} />
 		case 'ListSells':
-			return <ListSells updateScreen={setScreen} />
+			return <ListSells updateScreen={setScreen} filter={sellsFilter} setFilter={setSellsFilter} />
 		default:
 			return <div>Screen switcher error</div>
 		}
@@ -56,7 +58,11 @@ const App = () => {
 		<div>
 			{firebaseInitialized !== false ? (<div>
 				{screenSwitcher()}
-				{screen !== 'Login' && <NavPanel screen={screen} updateScreen={setScreen} />}
+
+				{
+					screen !== 'Login' &&
+					<NavPanel screen={screen} updateScreen={setScreen} productsFilter={productsFilter} setProductsFilter={setProductsFilter} />
+				}
 
 			</div>) : <div className="loader">Loading</div>}
 		</div>

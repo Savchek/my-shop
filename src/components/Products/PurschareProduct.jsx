@@ -58,7 +58,7 @@ const PurschareProduct = () => {
 		<div>
 			<h1>Purscharing</h1>
 			{choosingProduct ?
-				<ListProducts chooseProduct={chooseProduct} title='Choose product to purschare' filter='all' /> :
+				<ListProducts chooseProduct={chooseProduct} title='Choose product to purschare' filter={[]} /> :
 
 				<div>
 					<h1>{product.name}</h1>

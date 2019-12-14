@@ -12,8 +12,8 @@ import ListSells from '../Sells/ListSells'
 const App = () => {
 	const [firebaseInitialized, setFirebaseInitialized] = useState(false)
 	const [screen, setScreen] = useState('')
-	const [productsFilter, setProductsFilter] = useState('all')
-	const [sellsFilter, setSellsFilter] = useState('all')
+	const [productsFilter, setProductsFilter] = useState([])
+	const [sellsFilter, setSellsFilter] = useState([])
 
 	const initFirebase = async () => {
 		const res = await firebase.isInitialized()

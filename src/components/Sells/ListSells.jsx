@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import firebase from '../firebase'
 
-const ListSells = ({ updateScreen }) => {
+const ListSells = ({ dateFilter }) => {
 
 	const [sells, setSells] = useState([])
 	const [loading, setLoading] = useState(true)
 
+	const filterSells = () => {
+		console.log('REfilter')
+		setSells(sells => sells.filter(s => {
+			let sellDate = new Date(s.date)
+			return (
+				sellDate.getDay() === dateFilter.getDay() &&
+				sellDate.getMonth() === dateFilter.getMonth() &&
+				sellDate.getYear() === dateFilter.getYear()
+			)
+		}))
+	}
+
 	const getCollection = async () => {
 		await firebase.updateCollection()
 		setSells(firebase.collection.sells)
+		if (dateFilter) filterSells()
 		setLoading(false)
 	}
+
 
 	useEffect(() => {
 		getCollection()
@@ -42,13 +56,28 @@ const ListSells = ({ updateScreen }) => {
 
 						<p>Sell item info:</p>
 
-						{e.sellItemInfo.purscharePrices.map((p, i) => (
-							<p key={i}>Purschare price: {p}, Count: {e.sellItemInfo.sellCounts[i]} шт.</p>
-						))}
-						<p>Total to sell: {e.sellItemInfo.sellCount}</p>
-						<p>Sell price per piece: {e.sellItemInfo.sellPrice}</p>
 
-						<p>Total sell price: {e.sellItemInfo.sellCounts.reduce((t, v) => t + v * e.sellItemInfo.sellPrice, 0)}</p>
+						{
+							e.sellItemsInfo.map((item, index) => (
+
+								<div key={item.id}>
+									<h5>Item # {index + 1}</h5>
+									<p>Selling {item.sellCount} pieces for {item.sellPrice}$ each: </p>
+
+									{
+										item.purscharePrices.map((p, i) => (
+											<p key={i}>Purschare price: {p}, Count: {item.sellCounts[i]} шт.</p>
+										))
+									}
+
+								</div>
+
+							))
+						}
+
+
+						{/* <p> Total sell price: {e.sellItemsInfo.reduce((total, item) => item.sellCounts.reduce((t, v) => t + v * e.sellItemsInfo.sellPrice, 0), 0)}</p> */}
+
 
 
 
@@ -56,8 +85,8 @@ const ListSells = ({ updateScreen }) => {
 					</li>
 				))
 			}
-		</ul>
-	) : (<div>No sells planned</div>)
+		</ul >
+	) : (<div>No sells yet</div>)
 
 
 

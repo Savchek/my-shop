@@ -36,7 +36,7 @@ const NavPanel = ({ screen, updateScreen, productsFilter, setProductsFilter }) =
 			>Добавить товар</button>
 
 			<button
-				disabled={screen === 'EditProduct' && productsFilter === 'available'}
+				disabled={screen === 'EditProduct' && productsFilter.includes('available')}
 				onClick={() => {
 					setProductsFilter('available')
 					updateScreen('EditProduct')
@@ -44,7 +44,7 @@ const NavPanel = ({ screen, updateScreen, productsFilter, setProductsFilter }) =
 			>Наличие</button>
 
 			<button
-				disabled={screen === 'EditProduct' && productsFilter === 'all'}
+				disabled={screen === 'EditProduct' && productsFilter.length === 0}
 				onClick={() => {
 					setProductsFilter('all')
 					updateScreen('EditProduct')

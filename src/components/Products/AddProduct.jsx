@@ -6,11 +6,11 @@ const AddProduct = ({ updateScreen }) => {
 	const [product, setProduct] = useState({
 		name: '',
 		attribute: '',
-		purscharePrices: ['0'],
-		purschareCounts: ['0'],
-		sellCounts: ['0'],
-		sellPrice: '0',
-		sellCount: '0',
+		purscharePrices: [0],
+		purschareCounts: [0],
+		sellCounts: [0],
+		sellPrice: 0,
+		sellCount: 0,
 		id: Math.random()
 	})
 
@@ -18,7 +18,7 @@ const AddProduct = ({ updateScreen }) => {
 		if (buyData) {
 			setProduct(prevState => ({
 				...prevState,
-				[field]: [value]
+				[field]: [+value]
 			}))
 		} else {
 			setProduct(prevState => ({

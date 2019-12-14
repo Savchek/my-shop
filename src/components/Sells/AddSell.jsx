@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 import React, { useState } from 'react'
 import ListProducts from '../Products/ListProducts'
 import firebase from '../firebase'
@@ -5,7 +6,7 @@ import firebase from '../firebase'
 const ListSells = ({ updateScreen }) => {
 
 	const [loading, setLoading] = useState(false)
-	const [oldProduct, setOldProduct] = useState()
+	const [oldProduct, setOldProduct] = useState([])
 	const [choosingProduct, setChoosingProduct] = useState(true)
 	const [available, setAvailable] = useState(0)
 	const [sell, setSell] = useState({
@@ -16,14 +17,16 @@ const ListSells = ({ updateScreen }) => {
 			address: '',
 			phone: ''
 		},
-		sellItemInfo: {
-			name: '',
-			id: '',
-			purscharePrices: [],
-			sellCounts: [],
-			sellPrice: '',
-			sellCount: ''
-		},
+		sellItemsInfo: [],
+		// {
+		// 	name: '',
+		// 	id: '',
+		// 	purscharePrices: [],
+		// 	sellCounts: [],
+		// 	sellPrice: '',
+		// 	sellCount: '',
+		// 	available: 0
+		// }
 		date: '',
 		id: Math.random()
 	})
@@ -49,83 +52,92 @@ const ListSells = ({ updateScreen }) => {
 	}
 
 	const chooseProduct = product => {
-		setOldProduct(Object.assign({}, product))
-		updSellInfo('sellItemInfo', 'name', product.name)
-		updSellInfo('sellItemInfo', 'id', product.id)
-		updSellInfo('sellItemInfo', 'sellPrice', product.sellPrice)
-		let avail = product.purschareCounts.reduce((t, v) => t + parseInt(v), 0) - parseInt(product.sellCount)
-		setAvailable(avail)
+		setOldProduct(prevProducts => [...prevProducts, product])
+		let newSellItem = {
+			name: product.name,
+			id: product.id,
+			sellPrice: product.sellPrice,
+			available: product.purschareCounts.reduce((t, v) => t + parseInt(v), 0) - parseInt(product.sellCount),
+			purscharePrices: [],
+			sellCounts: [],
+			sellCount: ''
+		}
+
+		setSell(sell => ({ ...sell, sellItemsInfo: [...sell.sellItemsInfo, newSellItem] }))
 
 		setChoosingProduct(false)
 	}
 
 	const addSell = async () => {
-		if (sell.sellItemInfo.sellCount < 0) {
-			alert('Invalid count value')
+		if (sell.sellItemsInfo.some(e => e.sellCount < 0)) {
+			alert('Invalid count value in one of the items')
 			return 0
 		}
-		if (sell.sellItemInfo.sellCount > available) {
-			alert('Dont have that many available products')
+		if (sell.sellItemsInfo.some(e => e.sellCount > e.available)) {
+			alert('Dont have that many available products in one of the items')
 			return 0
 		}
 		if (!sell.buyerInfo.name.trim()) {
 			alert('Input buyer\'s name')
 			return 0
 		}
-
-		let nSell = sell
-
-		let updProduct = Object.assign({}, oldProduct)
-
 		setLoading(true)
 
-		await firebase.deleteProduct(oldProduct)
+		let nSell = { ...sell }
+
+
+		oldProduct.forEach(async (product, index) => {
+
+			await firebase.deleteProduct(product)
 
 
 
-		// changing purschares values
-		let sellC = parseInt(sell.sellItemInfo.sellCount)
+			// changing purschares values
+			let sellC = parseInt(product.sellCount)
 
-		while (sellC > 0) {
+			while (sellC > 0) {
 
-			let highestPrice = 0, index
+				let highestPrice = 0, index
 
-			updProduct.purscharePrices.forEach((v, i) => {
-				let pv = parseFloat(v)
-				if (pv > highestPrice && parseInt(updProduct.sellCounts[i]) < parseInt(updProduct.purschareCounts[i])) {
-					highestPrice = pv
-					index = i
+				product.purscharePrices.forEach((v, i) => {
+					let pv = parseFloat(v)
+					if (pv > highestPrice && parseInt(product.sellCounts[i]) < parseInt(product.purschareCounts[i])) {
+						highestPrice = pv
+						index = i
+					}
+				})
+
+				let count = parseInt(product.purschareCounts[index])
+
+				nSell.sellItemsInfo[index].purscharePrices.push(highestPrice)
+
+				if ((parseInt(product.sellCounts[index]) + sellC) <= count) {
+					console.log('Have full available')
+
+					product.sellCounts[index] = parseInt(product.sellCounts[index]) + sellC
+
+					nSell.sellItemsInfo[index].sellCounts.push(sellC)
+
+					break
+
+				} else {
+					console.log('Have partly available')
+					let difference = parseInt(product.purschareCounts[index]) - parseInt(product.sellCounts[index])
+					product.sellCounts[index] = product.purschareCounts[index]
+					sellC -= difference
+
+					nSell.sellItemsInfo[index].sellCounts.push(difference)
 				}
-			})
 
-			let count = parseInt(updProduct.purschareCounts[index])
-
-			nSell.sellItemInfo.purscharePrices.push(highestPrice)
-
-			if ((parseInt(updProduct.sellCounts[index]) + sellC) <= count) {
-				console.log('Have full available')
-
-				updProduct.sellCounts[index] = parseInt(updProduct.sellCounts[index]) + sellC
-
-				nSell.sellItemInfo.sellCounts.push(sellC)
-
-				break
-
-			} else {
-				console.log('Have partly available')
-				let difference = parseInt(updProduct.purschareCounts[index]) - parseInt(updProduct.sellCounts[index])
-				updProduct.sellCounts[index] = updProduct.purschareCounts[index]
-				sellC -= difference
-
-				nSell.sellItemInfo.sellCounts.push(difference)
 			}
 
-		}
+			// increasing product sellCount value
+			product.sellCount = parseInt(product.sellCount) + parseInt(sell.sellItemsInfo[index].sellCount)
 
-		// increasing product sellCount value
-		updProduct.sellCount = parseInt(updProduct.sellCount) + parseInt(sell.sellItemInfo.sellCount)
+			await firebase.addProduct(product)
 
-		await firebase.addProduct(updProduct)
+		})
+		console.log(nSell)
 		await firebase.addSell(nSell)
 		updateScreen('ListSells')
 		// console.log('Old product:')
@@ -137,13 +149,23 @@ const ListSells = ({ updateScreen }) => {
 	}
 
 
+	const updSellCount = (value, index) => {
+		let oldSell = { ...sell }
+		oldSell.sellItemsInfo[index].sellCount = value
+		setSell(oldSell)
+	}
 
 
 	return (
 		<div>
 			<h1>Adding sell</h1>
 			{choosingProduct ?
-				<ListProducts chooseProduct={chooseProduct} title='Choose product to sell' filter='all' /> :
+				<ListProducts
+					chooseProduct={chooseProduct}
+					title='Choose product to sell'
+					filter={['available', 'no-specific']}
+					specific={sell.sellItemsInfo.map(e => e.id)}
+				/> :
 				<div>
 					{loading && <div>Loading</div>}
 					<p>Title</p>
@@ -168,20 +190,26 @@ const ListSells = ({ updateScreen }) => {
 
 
 					<br />
-					<p>Product info:</p>
+					<p>Products info:</p>
 					<br />
 
-					<p>Name: {sell.sellItemInfo.name}</p>
+					{sell.sellItemsInfo.map((e, i) => (
+						<div key={i}>
+							<p>Name: {e.name}</p>
 
-					<p>Sell price: {sell.sellItemInfo.sellPrice}</p>
+							<p>Sell price: {e.sellPrice}</p>
 
-					<p>Count ({available} available)</p>
-					<input
-						name='productPurschareCount'
-						value={sell.sellItemInfo.sellCount}
-						onChange={e => updSellInfo('sellItemInfo', 'sellCount', e.target.value)}
-					/>
-					<button onClick={() => setChoosingProduct(true)}>Choose another product</button>
+							<p>Count ({e.available} available)</p>
+
+							<input
+								name='productPurschareCount'
+								value={e.sellCount}
+								onChange={e => updSellCount(e.target.value, i)}
+							/>
+						</div>
+					))}
+
+					<button onClick={() => setChoosingProduct(true)}>Add another product</button>
 
 					<br />
 
